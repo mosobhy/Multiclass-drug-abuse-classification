@@ -22,21 +22,21 @@
 ```
 
 ## 2. Pipeline for data preprocessing
-### 2.1 `Alignment`
-### 2.2 `Resizing`
-### 2.3 `ROI segmentation`
-### 2.4 `Normalization`
+#### `-Alignment`
+#### `-Resizing`
+#### `-ROI segmentation`
+#### `-Normalization`
 
 ## 3. Feature Extraction
-### 3.1 `SURF(speeded-up robust features) image descriptor`
-### 3.2 `SIFT(scale-invariant feature transform) image descriptor`
+#### `-SURF(speeded-up robust features) image descriptor`
+#### `-SIFT(scale-invariant feature transform) image descriptor`
 
 ## 4. Feature Selection
-### 4.1 `RFE (Recursive feature elimination) alogrithm`
-### 4.2 `PCA (Principle component analysis) alogrithm`
+#### `-RFE (Recursive feature elimination) alogrithm`
+#### `-PCA (Principle component analysis) alogrithm`
 
 ## 5. Multiclass model training
-### 5.1 `Train a Random Forest and Support Vector Machine`
+#### `-Train a Random Forest and Support Vector Machine`
 
 ## 6. Model initial testing
 
