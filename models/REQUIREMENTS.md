@@ -1,7 +1,7 @@
 # Multiclass drug abuse detection
 ## Model Construction
 ## 1. Load dataset from drive
-*Data format*
+*Folder Structure*
 ```
 ├── dataset
 │   ├── alcohol
@@ -52,12 +52,12 @@
 
 ## 8. Model evaluation
 ```
-Conf matrix 'precision, Recall, F-measure'
-AUC score
+-Conf matrix 'precision, Recall, F-measure'
+-AUC score
 ```
 
 ## 9. Model Deployment
 ```
-Model optimization for mobile usage
-Saving the model
+-Model optimization for mobile usage
+-Saving the model
 ```
