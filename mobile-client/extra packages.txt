@@ -1,0 +1,5 @@
+Here are some packages you have to install before using the onboarding screen
+
+1 => yarn add react-native-svg
+2 => npm install @expo/vector-icons
+3 => npm install @react-native-async-storage/async-storage
