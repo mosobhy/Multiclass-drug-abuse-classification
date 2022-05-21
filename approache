@@ -1,0 +1,8 @@
+
+
+SVM ==> OVO "it scale poorly with the size of the training set, so it faster to train many classifiers on small training set that training few classifiers on large training set
+i
+
+
+train an OVA ( and dont forget to tune the parameters to handle the bias)
+train an OVO ( it doesn't require bias handling cuz its trained on just the class that it classifies)
