@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ScrollView,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -16,19 +17,27 @@ import Header from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
 //access camera imports
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
+  // Saving the image_uri
   const [pickedImagePath, setPickedImagePath] = useState("");
+  // The Model Results
+  const [results, setResults] = useState("");
 
+  // Access the camera
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
+      alert("You've refused to allow this app to access your camera!");
       return;
     }
 
+    // Pick up the photo
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
@@ -36,16 +45,9 @@ const HomeScreen = () => {
 
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
-      console.log(result.uri);
     }
   };
-  const navigation = useNavigation();
-  const goToResults = () => {
-    navigation.navigate("Results", {
-      image: pickedImagePath,
-    });
-  };
-
+  // upload an image from filesystem
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,12 +56,50 @@ const HomeScreen = () => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
     }
+  };
+
+  // ***************** Send the image to the server *****************
+  const sendData = async () => {
+    const formData = new FormData();
+    // set the (key : value) pairs to => (image_uri : pickedImagePath )
+    formData.append("image_uri", pickedImagePath);
+    const jwt = await AsyncStorage.getItem("id_token");
+    // setting the headers
+    const headers = {
+      Authorization: "Bearer " + jwt,
+    };
+
+    let BaseURL = "";
+    axios({
+      method: "POST",
+      url: BaseURL,
+      headers: headers,
+      data: formData,
+    })
+      .then((response) => {
+        // response
+        //console.log(response.data.title);
+        setResults(response.data);
+      })
+      .catch((error) => {
+        Alert.alert("OOPS", "This Process has been Failed", [
+          ({
+            text: "Cancel",
+            onPress: () => navigation.navigate("Error"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => navigation.navigate("Error") }),
+        ]);
+      })
+      .finally(() => {
+        navigation.navigate("Results", {
+          image: pickedImagePath,
+          results: results,
+        });
+      });
   };
 
   /* ****************************************************************************** */
@@ -67,11 +107,14 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Image source={require("../assets/imgs/logo.png")} style={styles.logo} />
 
-      <View
-        style={{
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
           alignItems: "center",
           justifyContent: "center",
-          width: "100%",
+          width: "90%",
+          paddingBottom: "5%",
         }}
       >
         <View style={styles.homeSection}>
@@ -81,7 +124,7 @@ const HomeScreen = () => {
               justifyContent: "center",
             }}
           >
-            <Text style={[styles.text, styles.title]}>Welcome Ahlam</Text>
+            <Text style={[styles.text, styles.title]}>Welcome to Drugtion</Text>
             {!pickedImagePath ? (
               <Text style={[styles.text, styles.description]}>
                 No image picked yet
@@ -96,7 +139,7 @@ const HomeScreen = () => {
                   ]}
                 >
                   The image was picked successfully!
-                  <TouchableOpacity onPress={goToResults}>
+                  <TouchableOpacity onPress={() => sendData()}>
                     <Text
                       style={{
                         color: Colors.primary,
@@ -134,6 +177,9 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
+      </ScrollView>
+
+      <View style={{ position: "absolute", bottom: 0 }}>
         <Header />
       </View>
     </View>
@@ -151,15 +197,17 @@ const styles = StyleSheet.create({
   logo: {
     width: 211,
     maxWidth: "90%",
+    marginBottom: hp("1.5%"),
   },
   homeSection: {
     width: "100%",
     backgroundColor: "#fff",
-    height: hp("60%"),
+    height: hp("70%"),
     alignItems: "center",
     justifyContent: "space-around",
     borderTopLeftRadius: 70,
     borderTopRightRadius: 70,
+    paddingTop: hp("2%"),
   },
   text: {
     textAlign: "center",
@@ -167,7 +215,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp("4%"),
   },
   title: {
-    fontSize: hp("5%"),
+    fontSize: hp("4%"),
     fontWeight: "bold",
     marginBottom: hp("1%"),
   },
@@ -182,6 +230,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
+    marginHorizontal: hp("1.5%"),
+    marginBottom: hp("5%"),
   },
   btn: {
     backgroundColor: Colors.primary,

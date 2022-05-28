@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: hp("4%"),
-    fontWeight: "bold",
   },
   description: {
     fontSize: hp("2%"),
@@ -50,7 +49,6 @@ const styles = StyleSheet.create({
   },
   movingTo: {
     color: Colors.primary,
-    fontWeight: "bold",
   },
 });
 

@@ -1,28 +1,34 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React, { useState, useEffect } from "react";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import React, { useContext } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
-import { FontAwesome5 } from "@expo/vector-icons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { LoginContext } from "../Context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Header = () => {
-  //const [activeTab, setActiveTab] = useState("Home");
+  const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const navigation = useNavigation();
 
   const moveToHome = () => {
     navigation.navigate("Home");
   };
-  const moveToResults = () => {
-    navigation.navigate("Results");
+
+  const logOut = async () => {
+    try {
+      await AsyncStorage.removeItem("id_token");
+      //await AsyncStorage.clear();
+      setLoggedIn(false);
+    } catch (err) {
+      console.log("Error: ", err);
+    }
   };
-  const logOut = () => {
-    console.log("logged out");
-  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={moveToHome}>

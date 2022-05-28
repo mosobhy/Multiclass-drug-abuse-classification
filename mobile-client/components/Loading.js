@@ -1,19 +1,19 @@
 import React from "react";
 import { View, ActivityIndicator } from "react-native";
-
-const Loading = ({ size }) => {
+import Colors from "../constants/Colors";
+const Loading = () => {
   return (
     <View style={styles.spinnerContainer}>
-      <ActivityIndicator size={size} />
+      <ActivityIndicator size="large" color={Colors.primary} />
     </View>
   );
 };
 
 const styles = {
   spinnerContainer: {
-    flex: -1,
-    marginTop: 12,
-    marginBottom: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
   },
 };
 

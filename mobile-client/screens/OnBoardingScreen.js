@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 import { View, StyleSheet, FlatList, useWindowDimensions } from "react-native";
 import OnboardingItem from "../components/OnboardingItem";
-// import OnBoarding Data
 import { useNavigation } from "@react-navigation/native";
 import data from "../data/onboardingSlidesData";
 import NextButton from "../components/NextButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Colors from "../constants/Colors";
+
 const OnBoardingScreen = () => {
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
@@ -20,7 +20,6 @@ const OnBoardingScreen = () => {
       const offset = nextSlideIndex * width;
       slidesRef?.current?.scrollToOffset({ offset });
       setCurrentIndex(currentIndex + 1);
-      console.log(currentIndex);
     }
     // if we done viewing the onboarding screen => set the viewOnBoarding : true
     else {
@@ -29,14 +28,8 @@ const OnBoardingScreen = () => {
       } catch (err) {
         console.log("Error @setItem: ", err);
       }
-      navigation.navigate("Register");
+      navigation.navigate("Login");
     }
-  };
-
-  // Navigate To Register
-
-  const goToRegister = () => {
-    console.log(currentIndex);
   };
 
   const updateCurrentSlideIndex = (e) => {
@@ -44,6 +37,7 @@ const OnBoardingScreen = () => {
     const currentIndex = Math.round(contentOffsetX / width);
     setCurrentIndex(currentIndex);
   };
+
   return (
     <View style={{ alignItems: "center" }}>
       <View style={{ flex: 3 }}>

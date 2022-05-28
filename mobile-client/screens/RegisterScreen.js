@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import {
   View,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   Text,
+  Alert,
 } from "react-native";
 import FormDetails from "../components/FormDetails";
 import {
@@ -19,6 +20,7 @@ import Validator from "email-validator";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
 import DeviceStorage from "../DeviceStorage";
+import { LoginContext } from "../Context";
 
 const RegisterScreen = ({ navigation }) => {
   // Register Form schema
@@ -30,26 +32,43 @@ const RegisterScreen = ({ navigation }) => {
       .min(6, "Your Password has to be at least 6 characters"),
   });
 
+  const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const onRegister = async (email, password, username) => {
-    // let BaseURL;
-    // axios
-    //   .post(BaseURL + "/sign_up", {
-    //     user: {
-    //       username: username,
-    //       email: email,
-    //       password: password,
-    //     },
-    //   })
-    //   .then((response) => {
-    //     // Handle the JWT response here
-    //    await DeviceStorage.saveItem("id_token", response.data.jwt);
-    //   })
-    //   .catch((error) => {
-    //     // Handle returned errors here
-    //   });
+    let BaseURL = "http://localhost:4000/api/v1";
+    axios
+      .post(BaseURL + "/sign_up", {
+        user: {
+          username: username,
+          email: email,
+          password: password,
+        },
+      })
+      .then((response) => {
+        // Handle the JWT response here
+        DeviceStorage.saveItem("id_token", response.data.jwt);
+        setLoggedIn(true);
+      })
+      .catch((error) => {
+        // Handle returned errors here
+        setLoggedIn(false);
+        Alert.alert("OOPS", "This Process has been Failed", [
+          ({
+            text: "Cancel",
+            onPress: () => navigation.navigate("Error"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => navigation.navigate("Error") }),
+        ]);
+      });
 
-    await DeviceStorage.saveItem("fsdfdsf", username);
+    // await DeviceStorage.saveItem("id_token", "ahlam");
+    //setLoggedIn(true);
   };
+  if (loggedIn) {
+    useEffect(() => {
+      onLogin();
+    }, [loggedIn]);
+  }
 
   return (
     <View
@@ -146,7 +165,9 @@ const RegisterScreen = ({ navigation }) => {
 
               <TouchableOpacity
                 style={styles.btn(isValid)}
-                onPress={handleSubmit}
+                onPress={() => {
+                  handleSubmit();
+                }}
               >
                 <Text
                   style={{

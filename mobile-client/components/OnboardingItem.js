@@ -7,6 +7,10 @@ import {
   Image,
 } from "react-native";
 import Colors from "../constants/Colors";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 const OnboardingItem = ({ item }) => {
   const { width, height } = useWindowDimensions();
   return (
@@ -15,7 +19,7 @@ const OnboardingItem = ({ item }) => {
         source={item.image}
         style={[styles.image, { width, resizeMode: "contain" }]}
       />
-      <View>
+      <View style={{ paddingHorizontal: wp("2%") }}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
       </View>
@@ -32,7 +36,6 @@ const styles = StyleSheet.create({
   },
   image: {
     //flex: 0.7,
-
     width: 211,
     maxWidth: "70%",
     height: 202,
@@ -42,13 +45,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "800",
-    fontSize: 28,
+    fontSize: wp("9%"),
     marginBottom: 10,
     textAlign: "center",
     color: Colors.primary,
   },
   description: {
-    fontWeight: "300",
+    fontSize: wp("4.5%"),
     paddingHorizontal: 64,
     textAlign: "center",
     color: Colors.primary,

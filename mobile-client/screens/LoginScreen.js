@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -18,8 +18,12 @@ import Validator from "email-validator";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
+import DeviceStorage from "../DeviceStorage";
+import { LoginContext } from "../Context";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
+  const navigation = useNavigation();
   // Login Form schema
   const LoginFormSchema = Yup.object().shape({
     email: Yup.string().email().required("An Email is required"),
@@ -27,7 +31,44 @@ const LoginScreen = () => {
       .required()
       .min(6, "Your Password has to be at least 6 characters"),
   });
+  const { loggedIn, setLoggedIn } = useContext(LoginContext);
 
+  const onLogin = async (email, password) => {
+    // let BaseURL = "http://localhost:4000/api/v1";
+    // axios
+    //   .post(BaseURL + "/sign_in", {
+    //     user: {
+    //       email: email,
+    //       password: password,
+    //     },
+    //   })
+    //   .then((response) => {
+    //     // Handle the JWT response here
+    //     DeviceStorage.saveItem("id_token", response.data.jwt);
+    //     setLoggedIn(true);
+    //   })
+    //   .catch((error) => {
+    //     // Handle returned errors here
+    //     setLoggedIn(false);
+    //     Alert.alert("OOPS", "This Process has been Failed", [
+    //       ({
+    //         text: "Cancel",
+    //         onPress: () => navigation.navigate("Error"),
+    //         style: "cancel",
+    //       },
+    //       { text: "OK", onPress: () => navigation.navigate("Error") }),
+    //     ]);
+    //   });
+
+    await DeviceStorage.saveItem("id_token", "ahlam");
+    setLoggedIn(true);
+  };
+
+  if (loggedIn) {
+    useEffect(() => {
+      onLogin();
+    }, [loggedIn]);
+  }
   return (
     <View
       style={{
@@ -41,7 +82,7 @@ const LoginScreen = () => {
         <Formik
           initialValues={{ email: "", password: "" }}
           onSubmit={(values) => {
-            //onLogin(values.email, values.password);
+            return onLogin(values.email, values.password);
           }}
           validationSchema={LoginFormSchema}
           validateOnMount={true}
@@ -101,8 +142,11 @@ const LoginScreen = () => {
               </View>
 
               <TouchableOpacity
-                style={styles.btn(isValid)}
-                onPress={handleSubmit}
+                style={[styles.btn(isValid)]}
+                onPress={() => {
+                  // handle if the account doesn't exists you will not execute those 👉
+                  handleSubmit();
+                }}
               >
                 <Text
                   style={{
@@ -150,7 +194,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: isValid ? Colors.primary : Colors.light,
     backgroundColor: isValid ? Colors.primary : Colors.light,
-    fontWeight: "bold",
   }),
 });
 

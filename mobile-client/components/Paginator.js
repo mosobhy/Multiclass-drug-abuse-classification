@@ -1,6 +1,7 @@
 import { View, Animated, useWindowDimensions, StyleSheet } from "react-native";
 import React from "react";
 import Colors from "../constants/Colors";
+
 const Paginator = ({ data, scrollX }) => {
   const { width } = useWindowDimensions();
   return (

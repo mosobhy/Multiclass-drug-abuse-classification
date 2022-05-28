@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -7,13 +7,13 @@ import {
 import Colors from "../constants/Colors";
 import Header from "../components/Header";
 
-const ResultsScreen = ({ route, navigation }) => {
-  const { image } = route.params;
+const ResultsScreen = ({ route }) => {
+  // Get the parameters from Home Screen (the image, the results)
+  const { image, results } = route.params;
 
   return (
     <View style={styles.container}>
       <Image source={require("../assets/imgs/logo.png")} style={styles.logo} />
-
       <View
         style={{
           alignItems: "center",
@@ -39,14 +39,15 @@ const ResultsScreen = ({ route, navigation }) => {
                     padding: wp("4%"),
                   }}
                 >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit ut
-                  aliquam
+                  {results}
                 </Text>
               </View>
             )}
           </View>
         </View>
-        <Header />
+        <View style={{ position: "absolute", bottom: 0 }}>
+          <Header />
+        </View>
       </View>
     </View>
   );
