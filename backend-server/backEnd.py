@@ -10,7 +10,12 @@ import datetime
 import jwt
 import os
 import cv2
-import time
+import numpy as np
+import joblib
+import sys
+sys.modules['sklearn.externals.joblib'] = joblib
+import traceback
+
 
 app = Flask(__name__)
 
@@ -106,26 +111,23 @@ def login_user():
 @token_required
 def image(res):
 
+    lables_enum = {
+        0: "normal",
+        1: "alcohol", 
+        2: "bdz", 
+        3: "ecastasy",
+        4: "organic_solvents"
+    }
     
-    file = request.files["image"]
+    data = request.get_json()
 
-    # git dir of folder image and save the image 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    full_dir = os.path.join(dir_path , "Images")
-    file.filename = str(time.time()) + file.filename
-    file.save(os.path.join(full_dir , file.filename))
-    #load image
-    img = cv2.imread(os.path.join(full_dir , file.filename))
+    #Load the model
+    rnd_clf = joblib.load('./model/rnd_classifier.pkl')
+    features = data['image'].split(',')[:-1]
+    predictions = rnd_clf.predict(np.array(features))
 
-    token = request.headers['x-access-tokens']
-    data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-    current_user = Users.query.filter_by(userName=data['userName']).first()
+    return lables_enum[predictions.index(max(predictions))]
 
-    new_image = Images(user_id=current_user.id, path=file.filename, description="null", location="null")
-    db.session.add(new_image)
-    db.session.commit()
-    
-    return "result"
 
 if __name__=='__main__':
     app.run()
