@@ -1,10 +1,8 @@
 from flask import Flask, jsonify, make_response, request
-from .database import Users, Images
-from .middlewares import token_required
-from .api import login_user, signup_user, detect_drug
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import jwt
+from functools import wraps
 import os
 import cv2
 import numpy as np
@@ -21,6 +19,45 @@ app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
+
+
+class Users(db.Model):
+   id = db.Column(db.Integer, primary_key=True,)
+   public_id = db.Column(db.String(50), unique = True)
+   userName = db.Column(db.String(100), unique=True, nullable=False)
+   firstName = db.Column(db.String(50), nullable=False)
+   lastName = db.Column(db.String(50), nullable=False)
+   password = db.Column(db.String(50), nullable=False)
+   email = db.Column(db.String(100), unique=True, nullable=False)
+
+
+
+class Images(db.Model):
+   id = db.Column(db.Integer, primary_key=True)
+   user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+   path = db.Column(db.String(1000), nullable=False)
+   description = db.Column(db.String(500), nullable=False)
+   location = db.Column(db.String(200))
+
+#db.create_all()
+
+def token_required(f):
+   @wraps(f)
+   def decorator(*args, **kwargs):
+       token = None
+       if 'x-access-tokens' in request.headers:
+           token = request.headers['x-access-tokens']
+
+       if not token:
+           return jsonify({'message': 'a valid token is missing'})
+       try:
+           data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+           current_user = Users.query.filter_by(userName=data['userName']).first()
+       except:
+           return jsonify({'message': 'token is invalid'})
+
+       return f(current_user, *args, **kwargs)
+   return decorator
 
 
 
