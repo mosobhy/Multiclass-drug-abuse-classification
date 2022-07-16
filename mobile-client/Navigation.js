@@ -4,7 +4,9 @@ import RegisterScreen from "./screens/RegisterScreen";
 import LandingScreen from "./screens/LandingScreen";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
+import MapsScreen from "./screens/MapsScreen";
 import ResultsScreen from "./screens/ResultsScreen";
+import AnlyticsScreen from "./screens/AnlyticsScreen";
 import ErrorScreen from "./screens/ErrorScreen";
 import Loading from "./components/Loading";
 
@@ -21,7 +23,9 @@ export const LoggedIn = () => {
     <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Results" component={ResultsScreen} />
+      <Stack.Screen name="Maps" component={MapsScreen} />
       <Stack.Screen name="Error" component={ErrorScreen} />
+      <Stack.Screen name="Anlytics" component={AnlyticsScreen} />
     </Stack.Navigator>
   );
 };
